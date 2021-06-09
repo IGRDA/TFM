@@ -6,6 +6,7 @@ from functools import partial
 import utils
 import random
 from math import factorial
+from  itsample import sample
 
 class MertonPricer():
     """
@@ -66,10 +67,11 @@ class MertonPricer():
 
         self.aic =  2*5+ 2*a["fun"]
 
-    def mcPricer(self,K,r,T,S0,payoff,N):
+    def mcPricer(self,K,r,S0,payoff,N,T):
 
-        W = st.norm.rvs(0, 1, N)                                                        #Gaussian part                           
-        P = st.poisson.rvs(self.lam*T, size=N)                                          #Poisson number of arrivals  
+        W = st.norm.rvs(0, 1, N)
+        t=1                                                        #Gaussian part                           
+        P = st.poisson.rvs(self.lam*t, size=N)                                          #Poisson number of arrivals  
         Jumps = np.asarray( [st.norm.rvs(self.muJ, self.sigJ, i).sum() for i in P ] )   #Gaussian Jumps      
         X = self.mu*T + np.sqrt(T)*self.sig*W + Jumps                                   
 

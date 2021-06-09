@@ -55,7 +55,7 @@ class AlPhaStablePricer():
         X=st.levy_stable.rvs(
                         alpha=self.alpha, 
                         beta=self.betta,
-                        loc=self.mu-self.mcm,
+                        loc=self.mu,
                         scale=self.c,
                         size=N)
 

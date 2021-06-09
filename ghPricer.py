@@ -72,6 +72,8 @@ class GhPricer():
                      method='Nelder-Mead', args=(data), constraints=cons))
 
         a_best = np.median(np.array([i["x"] for i in a if i["fun"]!=-0.0]),axis=0)
+        #a_best = min(a, key=lambda x:x['fun'])["x"]
+        
 
         self.delta, self.mu, self.lam, self.alpha, self.betta = a_best
 
@@ -93,7 +95,7 @@ class GhPricer():
                                      betta=self.betta)
         X = sample(pdf_gh,N)
 
-        S_T = S0 * np.exp( (r)*T + X )
+        S_T = S0 * np.exp( (r-self.mcm)*T + X )
 
         
         option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
