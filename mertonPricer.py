@@ -49,7 +49,7 @@ class MertonPricer():
 
         cons = [{'type':'ineq', 'fun': lambda x: x[1]},
                 {'type':'ineq', 'fun': lambda x: x[4]}]
-                
+
         a =minimize(self.log_likely_Merton, x0=[data.mean(),data.std(),1,data.mean(),data.std()], 
                     method='Nelder-Mead', args=(data,T) , constraints=cons)
 
@@ -73,7 +73,7 @@ class MertonPricer():
         Jumps = np.asarray( [st.norm.rvs(self.muJ, self.sigJ, i).sum() for i in P ] )   #Gaussian Jumps      
         X = self.mu*T + np.sqrt(T)*self.sig*W + Jumps                                   
 
-        S_T = S0 * np.exp( (r-self.mcm)*T + X )
+        S_T = S0 * np.exp( (r+self.mcm)*T + X )
 
         option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
         option = np.exp(-r*T) * np.mean( option_payoff ) # Mean

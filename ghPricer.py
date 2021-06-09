@@ -54,6 +54,8 @@ class GhPricer():
 
 
     def fit(self,data,N=1000):
+        cons = [{'type':'ineq', 'fun': lambda x: x[4]-x[3]-1/2},
+                {'type':'ineq', 'fun': lambda x: x[4]+x[3]+1/2}]
 
         #Montecarlo median of maximum likelihood stimation
         x0=[]
@@ -67,7 +69,7 @@ class GhPricer():
         a=[]
         for x in x0:
             a.append(minimize(self.log_likely_GH, x0=x,
-                     method='Nelder-Mead', args=(data)))
+                     method='Nelder-Mead', args=(data), constraints=cons))
 
         a_best = np.median(np.array([i["x"] for i in a if i["fun"]!=-0.0]),axis=0)
 
