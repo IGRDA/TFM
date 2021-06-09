@@ -42,12 +42,12 @@ class GhPricer():
 
     def cf_GH(self,u,t,delta,mu,lam,alpha,betta):
     
-        A = ( ( alpha**2-betta**2 )/ (alpha**2- (betta+1j*u)**2) )**(0.5*lam)
+        A = ( ( alpha**2-betta**2 )/ (alpha**2- (betta+1j*u)**2) )**(0.5*lam*t)
         
-        B = scps.kv(lam,delta*np.sqrt(lam**2-( betta + 1j*u)**2)) / \
-            scps.kv(lam,delta*np.sqrt(alpha**2-betta**2))
+        B = ( scps.kv(lam,delta*np.sqrt(lam**2-( betta + 1j*u)**2)) / \
+            scps.kv(lam,delta*np.sqrt(alpha**2-betta**2)) )**t
         
-        return np.exp(1j*mu*u*t)*(A**t)*(B**t)
+        return np.exp(1j*mu*u*t)*A*B
 
     def log_likely_GH(self,x, data):
         return (-1) * np.sum( np.log( self.GH_density(data, x[0], x[1], x[2], x[3], x[4]) ))
@@ -93,7 +93,7 @@ class GhPricer():
                                      betta=self.betta)
         X = sample(pdf_gh,N)
 
-        S_T = S0 * np.exp( (r-self.mcm.real)*T + X )
+        S_T = S0 * np.exp( (r)*T + X )
 
         
         option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)

@@ -73,7 +73,7 @@ class MertonPricer():
         Jumps = np.asarray( [st.norm.rvs(self.muJ, self.sigJ, i).sum() for i in P ] )   #Gaussian Jumps      
         X = self.mu*T + np.sqrt(T)*self.sig*W + Jumps                                   
 
-        S_T = S0 * np.exp( (r+self.mcm)*T + X )
+        S_T = S0 * np.exp( (r-self.mcm)*T + X )
 
         option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
         option = np.exp(-r*T) * np.mean( option_payoff ) # Mean

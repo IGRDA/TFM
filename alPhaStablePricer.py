@@ -33,6 +33,7 @@ class AlPhaStablePricer():
 
     def fit(self,data):
         
+        
         self.alpha, self.betta, self.mu, self.c =st.levy_stable.fit(data=data,
                                                                     optimizer=fmin_bfgs)
 
@@ -58,7 +59,7 @@ class AlPhaStablePricer():
                         scale=self.c,
                         size=N)
 
-        S_T = S0 * np.exp( r*T + X )
+        S_T = S0 * np.exp( (r-self.mcm)*T + X )
 
         
         option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
