@@ -52,14 +52,22 @@ class AlPhaStablePricer():
 
             
     def mcPricer(self,K,r,T,S0,payoff,N):
-        X=st.levy_stable.rvs(
+
+
+        
+        X=np.sum(st.levy_stable.rvs(
                         alpha=self.alpha, 
                         beta=self.betta,
                         loc=self.mu,
                         scale=self.c,
-                        size=N)
+                        size=(T,N)),axis=0)
 
-        S_T = S0 * np.exp( (r-self.mcm)*T + X )
+
+        X_clean =X[abs(X-X.mean())<10*np.std(X)]
+
+
+
+        S_T = S0 * np.exp( (r-self.mcm)*T + X_clean )
 
         
         option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)

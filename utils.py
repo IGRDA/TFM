@@ -10,7 +10,7 @@ def payoff(payoff, S,K):
     elif payoff == "put":    
         return np.maximum( K - S, 0 ) 
     
-def fourierPricer(K,S0,payoff,r,T,cf,udep,xmax=2000,limit=1000):
+def fourierPricer(K,S0,payoff,r,T,cf,udep,xmax=np.inf,limit=1000):
 
         """ 
         Lewis integral for European options

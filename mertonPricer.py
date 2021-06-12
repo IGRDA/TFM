@@ -6,7 +6,6 @@ from functools import partial
 import utils
 import random
 from math import factorial
-from  itsample import sample
 
 class MertonPricer():
     """
@@ -68,6 +67,7 @@ class MertonPricer():
         self.aic =  2*5+ 2*a["fun"]
 
     def mcPricer(self,K,r,S0,payoff,N,T):
+        
 
         W = st.norm.rvs(0, 1, N)
         t=1                                                        #Gaussian part                           

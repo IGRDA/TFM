@@ -4,7 +4,6 @@ import scipy.special as scps
 from scipy.optimize import minimize
 from functools import partial
 import utils
-import random
 from itsample import sample
 
 
@@ -53,26 +52,29 @@ class GhPricer():
         return (-1) * np.sum( np.log( self.GH_density(data, x[0], x[1], x[2], x[3], x[4]) ))
 
 
-    def fit(self,data,N=1000):
-        cons = [{'type':'ineq', 'fun': lambda x: x[4]-x[3]-1/2},
-                {'type':'ineq', 'fun': lambda x: x[4]+x[3]+1/2}]
+    def fit(self,data,N=10000):
+        cons = [{'type':'ineq', 'fun': lambda x: x[3]-x[4]+1/2},
+                {'type':'ineq', 'fun': lambda x: x[4]+x[3]-1/2},
+                {'type': 'eq', 'fun': lambda x:  x[0]},
+                {'type': 'eq', 'fun': lambda x:  x[1]}
+                ]
 
         #Montecarlo median of maximum likelihood stimation
         x0=[]
-        for i in range(N):
-            x0.append([random.uniform(0,1),
-                       random.uniform(-0.1,0.1),
-                       random.uniform(-1,1),
-                       random.uniform(-1,1),
-                       random.uniform(-1,1)])
+        for i in range(1000):
+            x0.append([np.random.exponential(0.1),
+                       np.random.exponential(0.1),
+                       np.random.exponential(0.1),
+                       0,
+                       0])
 
         a=[]
         for x in x0:
             a.append(minimize(self.log_likely_GH, x0=x,
                      method='Nelder-Mead', args=(data), constraints=cons))
 
-        a_best = np.median(np.array([i["x"] for i in a if i["fun"]!=-0.0]),axis=0)
-        #a_best = min(a, key=lambda x:x['fun'])["x"]
+        #a_best = np.median(np.array([i["x"] for i in a if i["fun"]!=-0.0]),axis=0)
+        a_best = min(a, key=lambda x:x['fun'])["x"]
         
 
         self.delta, self.mu, self.lam, self.alpha, self.betta = a_best
@@ -93,7 +95,7 @@ class GhPricer():
                                      lam=self.lam,
                                      alpha=self.alpha,
                                      betta=self.betta)
-        X = sample(pdf_gh,N)
+        X = np.sum((sample(pdf_gh,T) for x in range(N)),axis=0)
 
         S_T = S0 * np.exp( (r-self.mcm)*T + X )
 
