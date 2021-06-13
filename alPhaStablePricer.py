@@ -62,9 +62,9 @@ class AlPhaStablePricer():
                         scale=self.c,
                         size=(T,N)),axis=0)
 
-
+        
         X_clean =X[abs(X-X.mean())<10*np.std(X)]
-
+        """
 
 
         S_T = S0 * np.exp( (r-self.mcm)*T + X_clean )
@@ -75,5 +75,10 @@ class AlPhaStablePricer():
         option_error = np.exp(-r*T) * st.sem( option_payoff ) # Standar error of mean
 
         return option.real, option_error
-
+        """
+        S_T = S0 * np.exp( (r )*T + X_clean )     # Martingale exponential Merton
+        S_T= S_T.reshape((len(S_T),1))
+        
+        V = np.mean( np.exp(-(r)*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )
+        return V.real
     
