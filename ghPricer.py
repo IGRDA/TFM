@@ -51,7 +51,7 @@ class GhPricer():
         return (-1) * np.sum( np.log( self.GH_density(data, x[0], x[1], x[2], x[3], x[4]) ))
 
 
-    def fit(self,data,N=10):
+    def fit(self,data,N=100):
         cons = [{'type':'ineq', 'fun': lambda x: x[3]-x[4]+1/2},
                 {'type':'ineq', 'fun': lambda x: x[4]+x[3]-1/2},
                 {'type': 'eq', 'fun': lambda x:  x[0]},
@@ -60,7 +60,7 @@ class GhPricer():
 
         #Best parameters with random inicializaation, triying to avoid local minima
         x0=[]
-        for i in range(1000):
+        for i in range(N):
             x0.append([np.random.exponential(0.1),
                        np.random.exponential(0.1),
                        np.random.exponential(0.1),
@@ -77,7 +77,8 @@ class GhPricer():
 
         self.delta, self.mu, self.lam, self.alpha, self.betta = a_best
 
-        self.mcm = np.log(self.cf_GH(-1j,
+        self.mcm = np.log(self.cf_GH(
+                                    u=-1j,
                                     t=1,
                                     delta=self.delta,
                                     mu=self.mu,
@@ -86,23 +87,6 @@ class GhPricer():
                                     betta=self.betta))
 
         self.aic = 2*5+2*self.log_likely_GH(x=a_best,data=data)
-
-    #def mcPricer(self,K,r,T,S0,payoff,N=10000):
-    #    pdf_gh = partial(self.GH_density,delta=self.delta,
-    #                                 mu=self.mu,
-    #                                 lam=self.lam,
-    #                                 alpha=self.alpha,
-    #                                 betta=self.betta)
-    #    X = np.sum((sample(pdf_gh,T) for x in range(N)),axis=0)
-
-    #    S_T = S0 * np.exp( (r-self.mcm)*T + X )
-
-        
-    #    option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
-    #    option = np.exp(-r*T) * np.mean( option_payoff ) # Mean
-    #    option_error = np.exp(-r*T) * st.sem( option_payoff ) # Standar error of mean
-
-    #    return option.real, option_error
 
     
 

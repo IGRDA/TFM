@@ -51,7 +51,6 @@ class AlPhaStablePricer():
                                                  beta=self.betta,
                                                  loc=self.mu,
                                                  scale=self.c) )
-
             
     def mcPricer(self,K,r,T,S0,payoff,N):
 
@@ -79,7 +78,7 @@ class AlPhaStablePricer():
         S_T= S_T.reshape((N,1))
         """
 
-        X = X[abs(X-np.mean(X))<np.std(X)]
+        X = X[abs(X-np.mean(X))<2*np.std(X)]
 
         S_T = S0 * np.exp((r-self.mcm)*T+  X )     # Martingale exponential Merton
         S_T= S_T.reshape((len(S_T),1))
