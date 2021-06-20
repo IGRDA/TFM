@@ -29,9 +29,9 @@ class MertonPricer():
         #AIC
         self.aic = None
     
-    def Merton_density(self,x, T, mu, sig, lam, muJ, sigJ,nterms=100):
+    def Merton_density(self,x, T, mu, sig, lam, muJ, sigJ,nterms=150):
         serie = 0
-        for k in range(100):
+        for k in range(nterms):
             serie += (lam*T)**k * np.exp(-(x-mu*T-k*muJ)**2/( 2*(T*sig**2+k*sigJ**2) ) ) \
                     / (factorial(k) * np.sqrt(2*np.pi * (sig**2*T+k*sigJ**2) ) )  
         return np.exp(-lam*T) * serie
@@ -48,11 +48,13 @@ class MertonPricer():
     
     def fit(self,data,T):
 
-        #cons = [{'type':'ineq', 'fun': lambda x: x[1]},
-        #        {'type':'ineq', 'fun': lambda x: x[4]}]
+        cons = [{'type':'ineq', 'fun': lambda x: x[1]},
+                {'type':'ineq', 'fun': lambda x: x[4]},
+                {'type':'eq', 'fun': lambda x: x[0]},
+                {'type':'eq', 'fun': lambda x: x[3]}]
 
-        a =minimize(self.log_likely_Merton, x0=[data.mean(),data.std(),1,data.mean(),data.std()], 
-                    method='Nelder-Mead', args=(data,T) )#, constraints=cons)
+        a =minimize(self.log_likely_Merton, x0=[data.mean(),data.std(),2,data.mean(),data.std()], 
+                    method='Nelder-Mead', args=(data,T) , constraints=cons)
 
         self.mu, self.sig, self.lam, self.muJ, self.sigJ = a["x"]
 
@@ -71,33 +73,16 @@ class MertonPricer():
     
     def mcPricer(self,K,r,S0,payoff,N,T):
 
-
-        
-        
-
-        W = st.norm.rvs(0, 1, N)              # The normal RV vector  
-        P = st.poisson.rvs(self.lam*T, size=N)    # Poisson random vector (number of jumps)
-        Jumps = np.asarray([st.norm.rvs(self.muJ, self.sigJ, ind).sum() for ind in P ]) # Jumps vector
-        S_T = S0 * np.exp( (r - self.mcm )*T + np.sqrt(T)*self.sig*W + Jumps )     # Martingale exponential Merton
+        W = st.norm.rvs(0, 1, N)                  #Gaussian part  
+        P = st.poisson.rvs(self.lam*T, size=N)    #Poisson number of arrivals
+        Jumps = np.asarray([st.norm.rvs(self.muJ, self.sigJ, ind).sum() for ind in P ]) # Jumps
+        S_T = S0 * np.exp( (r - self.mcm )*T + np.sqrt(T)*self.sig*W + Jumps )     # Martingale exponential
         S_T= S_T.reshape((N,1))
         
-        V = np.mean( np.exp(-r*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )
-        
-        
+        option = np.mean( np.exp(-r*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )[0]  # Mean
+        option_error =  st.sem( np.exp(-r*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )[0] # Standar error of mean
 
-        #W = st.norm.rvs(0, 1, N)                                                      #Gaussian part                           
-        #P = st.poisson.rvs(self.lam*t, size=N)                                          #Poisson number of arrivals  
-        #Jumps = np.asarray( [st.norm.rvs(self.muJ, self.sigJ, i).sum() for i in P ] )   #Gaussian Jumps      
-        #X = self.mu*T + np.sqrt(T)*self.sig*W + Jumps                                   
-
-        #S_T = S0 * np.exp( (r-self.mcm)*T + X )
-
-        option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
-        option = np.exp(-r*T) * np.mean( option_payoff ) # Mean
-        option_error = np.exp(-r*T) * st.sem( option_payoff ) # Standar error of mean
-
-        #return option.real, option_error
-        return V.real
+        return option.real, option_error
 
 
                                                

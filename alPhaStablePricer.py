@@ -11,6 +11,8 @@ class AlPhaStablePricer():
     """
     def __init__(self):
 
+        #st.levy_stable.pdf_default_method = 'quadrature' #More acurate but slow
+
         #Parameters
         self.alpha = None
         self.betta = None
@@ -24,9 +26,9 @@ class AlPhaStablePricer():
         self.aic = None
 
     def cf_stable(self,t,alpha,betta,c,mu):
-        if alpha==1:
-            psi=np.tan(np.pi*np.alpha/2)
         if alpha!=1:
+            psi=np.tan(np.pi*alpha/2)
+        if alpha==1:
             psi=-2/np.pi * np.log(np.abs(t))
         return np.exp(1j*t*mu-np.abs(c*t)**alpha * ( (1-1j*betta*np.sign(t)*psi)))
 
@@ -37,7 +39,7 @@ class AlPhaStablePricer():
         self.alpha, self.betta, self.mu, self.c =st.levy_stable.fit(data=data,
                                                                     optimizer=fmin_bfgs)
 
-        self.mcm = np.log(self.cf_stable(t=1,
+        self.mcm = np.log(self.cf_stable(t=-1j,
                                         alpha=self.alpha, 
                                         betta=self.betta,
                                         mu=self.mu,
@@ -53,32 +55,37 @@ class AlPhaStablePricer():
             
     def mcPricer(self,K,r,T,S0,payoff,N):
 
-
+        X=st.levy_stable.rvs(
+                        alpha=self.alpha, 
+                        beta=self.betta,
+                        loc=self.mu,
+                        scale=self.c,
+                        size=N)*T
         
+        
+
         X=np.sum(st.levy_stable.rvs(
                         alpha=self.alpha, 
                         beta=self.betta,
                         loc=self.mu,
                         scale=self.c,
-                        size=(T,N)),axis=0)
+                        size=(N,T)),axis=1)
 
-        
-        X_clean =X[abs(X-X.mean())<10*np.std(X)]
+        """
+        W = st.norm.rvs(0, 1, N)                  #Gaussian part  
+        P = st.poisson.rvs(self.lam*T, size=N)    #Poisson number of arrivals
+        Jumps = np.asarray([st.norm.rvs(self.muJ, self.sigJ, ind).sum() for ind in P ]) # Jumps
+        S_T = S0 * np.exp( (r - self.mcm )*T + np.sqrt(T)*self.sig*W + Jumps )     # Martingale exponential
+        S_T= S_T.reshape((N,1))
         """
 
+        X = X[abs(X-np.mean(X))<np.std(X)]
 
-        S_T = S0 * np.exp( (r-self.mcm)*T + X_clean )
-
-        
-        option_payoff = utils.payoff(S=S_T,K=K,payoff=payoff)
-        option = np.exp(-r*T) * np.mean( option_payoff ) # Mean
-        option_error = np.exp(-r*T) * st.sem( option_payoff ) # Standar error of mean
-
-        return option.real, option_error
-        """
-        S_T = S0 * np.exp( (r )*T + X_clean )     # Martingale exponential Merton
+        S_T = S0 * np.exp((r-self.mcm)*T+  X )     # Martingale exponential Merton
         S_T= S_T.reshape((len(S_T),1))
         
-        V = np.mean( np.exp(-(r)*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )
-        return V.real
+        option = np.mean( np.exp(-(r)*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )[0]
+
+        option_error =  st.sem( np.exp(-(r)*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )[0]
+        return option.real, option_error
     

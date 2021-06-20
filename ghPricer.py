@@ -4,7 +4,6 @@ import scipy.special as scps
 from scipy.optimize import minimize
 from functools import partial
 import utils
-from itsample import sample
 
 
 class GhPricer():
@@ -59,7 +58,7 @@ class GhPricer():
                 {'type': 'eq', 'fun': lambda x:  x[1]}
                 ]
 
-        #Montecarlo median of maximum likelihood stimation
+        #Best parameters with random inicializaation, triying to avoid local minima
         x0=[]
         for i in range(1000):
             x0.append([np.random.exponential(0.1),
@@ -73,7 +72,6 @@ class GhPricer():
             a.append(minimize(self.log_likely_GH, x0=x,
                      method='Nelder-Mead', args=(data), constraints=cons))
 
-        #a_best = np.median(np.array([i["x"] for i in a if i["fun"]!=-0.0]),axis=0)
         a_best = min(a, key=lambda x:x['fun'])["x"]
         
 
