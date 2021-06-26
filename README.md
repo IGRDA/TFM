@@ -24,7 +24,7 @@ Notebooks with test for Merton and alpha stable
 
 [1] R Cont and P Tankov.Financial Modelling with Jump Processes. Chapman & Hall/CRC,2003.
 
-[2] Alan L. Lewis.   A Simple Option Formula for General Jump-Diusion and otherExponential Levy Processes. Related articles explevy, Finance Press, August 2001.
+[2] Alan L. Lewis.   A Simple Option Formula for General Jump-Diffusion and otherExponential Levy Processes. Related articles explevy, Finance Press, August 2001.
 
 ## Contributing
  
