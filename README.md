@@ -1,5 +1,4 @@
 # Introduction to Lévyprocesses and financialapplications
-=========================================================
 
 This repository complements my master's thesis on introduction to Lévy processes with applications in finance. 
 
