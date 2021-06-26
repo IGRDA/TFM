@@ -70,17 +70,9 @@ class AlPhaStablePricer():
                         scale=self.c,
                         size=(N,T)),axis=1)
 
-        """
-        W = st.norm.rvs(0, 1, N)                  #Gaussian part  
-        P = st.poisson.rvs(self.lam*T, size=N)    #Poisson number of arrivals
-        Jumps = np.asarray([st.norm.rvs(self.muJ, self.sigJ, ind).sum() for ind in P ]) # Jumps
-        S_T = S0 * np.exp( (r - self.mcm )*T + np.sqrt(T)*self.sig*W + Jumps )     # Martingale exponential
-        S_T= S_T.reshape((N,1))
-        """
-
         X = X[abs(X-np.mean(X))<2*np.std(X)]
 
-        S_T = S0 * np.exp((r-self.mcm)*T+  X )     # Martingale exponential Merton
+        S_T = S0 * np.exp((r-self.mcm)*T+  X )     # Martingale correction
         S_T= S_T.reshape((len(S_T),1))
         
         option = np.mean( np.exp(-(r)*T) * utils.payoff(S=S_T,K=K,payoff=payoff), axis=0 )[0]
