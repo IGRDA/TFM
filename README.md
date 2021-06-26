@@ -12,7 +12,7 @@ The code is free of usage, but the author does not take responsibility for its u
 <li>utils.py : Lewis Fourier transform method and functions for the payoffs</li>
 <li>mertonPricer: Class for model fitting and option valuation using Merton’s model</li>
 <li>alPhaStablePricer.py : Class for model fitting and option valuation using alpha stable model</li>
-<li>ghPricer.py : Class for model fitting and option valuation using generalized hyperbolic model (It contains some **bugs** . Although the fit part seems to be fine, in option valuation unexpected results are seen!)</li>
+<li>ghPricer.py : Class for model fitting and option valuation using generalized hyperbolic model (It contains some <strong>bugs</strong>. Although the fit part seems to be fine, in option valuation unexpected results are seen!)</li>
 <li>TFM_INAKI.ipynb : Notebook with the graphs and some results shown in the work</li>
 <li>Tests.ipynb : 
 Notebooks with test for Merton and alpha stable
