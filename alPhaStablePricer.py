@@ -6,12 +6,9 @@ import utils
 
 class AlPhaStablePricer():
     """
-    European Alpha Stable
-    Descripcioon de la clase
+    European option Alpha Stable pricer
     """
     def __init__(self):
-
-        #st.levy_stable.pdf_default_method = 'quadrature' #More acurate but slow
 
         #Parameters
         self.alpha = None
@@ -69,8 +66,6 @@ class AlPhaStablePricer():
                         loc=self.mu,
                         scale=self.c,
                         size=(N,T)),axis=1)
-
-        X = X[abs(X-np.mean(X))<2*np.std(X)]
 
         S_T = S0 * np.exp((r-self.mcm)*T+  X )     # Martingale correction
         S_T= S_T.reshape((len(S_T),1))

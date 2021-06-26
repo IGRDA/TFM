@@ -8,8 +8,7 @@ import utils
 
 class GhPricer():
     """
-    European Generalyzed Hyperbolic
-    Descripcioon de la clase
+    European option Generalyzed Hyperbolic pricer
     """
     def __init__(self):
 
@@ -53,12 +52,9 @@ class GhPricer():
 
     def fit(self,data,N=100):
         cons = [{'type':'ineq', 'fun': lambda x: x[3]-x[4]+1/2},
-                {'type':'ineq', 'fun': lambda x: x[4]+x[3]-1/2},
-                {'type': 'eq', 'fun': lambda x:  x[0]},
-                {'type': 'eq', 'fun': lambda x:  x[1]}
-                ]
+                {'type':'ineq', 'fun': lambda x: x[4]+x[3]-1/2}]
 
-        #Best parameters with random inicializaation, triying to avoid local minima
+        #Best parameters with random inicialization, triying to avoid local minima
         x0=[]
         for i in range(N):
             x0.append([np.random.exponential(0.1),

@@ -10,8 +10,7 @@ from math import factorial
 
 class MertonPricer():
     """
-    European Merton
-    Descripcioon de la clase
+    European option Merton pricer
     """
     def __init__(self):
 
@@ -49,9 +48,7 @@ class MertonPricer():
     def fit(self,data,T):
 
         cons = [{'type':'ineq', 'fun': lambda x: x[1]},
-                {'type':'ineq', 'fun': lambda x: x[4]},
-                {'type':'eq', 'fun': lambda x: x[0]},
-                {'type':'eq', 'fun': lambda x: x[3]}]
+                {'type':'ineq', 'fun': lambda x: x[4]}]
 
         a =minimize(self.log_likely_Merton, x0=[data.mean(),data.std(),2,data.mean(),data.std()], 
                     method='Nelder-Mead', args=(data,T) , constraints=cons)
