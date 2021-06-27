@@ -17,7 +17,10 @@ The code is free of usage, but the author does not take responsibility for its u
 <li>Tests.ipynb : 
 Notebook with tests for Merton and alpha stable
 </li>
+<li>Goodness of fit.ipynb : Notebook with alpha stable Kolmogorov–Smirnov test and q-q plot</li>
 </ul>
+
+
 
 ## References
 
