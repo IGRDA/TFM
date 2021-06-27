@@ -1,4 +1,4 @@
-# Introduction to Lévyprocesses and financial applications
+# Introduction to Lévy processes and financial applications
 
 This repository complements my master's thesis on introduction to Lévy processes with applications in finance. 
 
@@ -15,7 +15,7 @@ The code is free of usage, but the author does not take responsibility for its u
 <li>ghPricer.py : Class for model fitting and option valuation using generalized hyperbolic model (It contains some <strong>bugs</strong>. Although the fit part seems to be fine, in option valuation unexpected results are seen!)</li>
 <li>TFM_INAKI.ipynb : Notebook with the graphs and some results shown in the work</li>
 <li>Tests.ipynb : 
-Notebooks with test for Merton and alpha stable
+Notebook with tests for Merton and alpha stable
 </li>
 </ul>
 
