@@ -6,6 +6,8 @@ It serves as a guide to see how to implement almost from scratch, model selectio
 
 The code is free of usage, but the author does not take responsibility for its use in practice since there may be some minor bugs.
 
+For a more advance topics and a complete work in the same lines see https://github.com/cantaro86/Financial-Models-Numerical-Methods.
+
 ## Contents
 
 <ul>
